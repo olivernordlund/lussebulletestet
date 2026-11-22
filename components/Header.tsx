@@ -1,10 +1,19 @@
 import Bun from "./Bun";
 
 /** Small centered brand pill, design.how-style top bar. */
-export function Brand({ right }: { right?: React.ReactNode }) {
+export function Brand({ right, onClick }: { right?: React.ReactNode; onClick?: () => void }) {
   return (
     <div className="brand">
-      <a href="/" className="brand__pill">
+      <a
+        href="/?start"
+        className="brand__pill"
+        onClick={(e) => {
+          if (onClick) {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+      >
         <Bun size={22} />
         <span>Lussebulletestet</span>
       </a>

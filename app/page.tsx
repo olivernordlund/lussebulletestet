@@ -37,6 +37,23 @@ export default function VotePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [home, setHome] = useState(false);
+
+  // Opened via the brand link from another page (/?start) → show the start screen
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("start")) {
+      setHome(true);
+      window.history.replaceState(null, "", "/");
+    }
+  }, []);
+
+  const goHome = () => {
+    setActive(null);
+    setEditingName(false);
+    setNameDraft(name);
+    setHome(true);
+    window.scrollTo({ top: 0 });
+  };
 
   // Init voter identity + load existing votes
   useEffect(() => {
@@ -96,6 +113,7 @@ export default function VotePage() {
     setName(n);
     writeLS(NAME_KEY, n);
     setEditingName(false);
+    setHome(false);
     if (voterId && Object.keys(votes).length) {
       fetch("/api/vote", {
         method: "POST",
@@ -142,7 +160,7 @@ export default function VotePage() {
   if (state?.revealed) {
     return (
       <main className="page">
-        <Brand />
+        <Brand onClick={goHome} />
         <Stickers />
         <Header title="Resultatet är avslöjat!" subtitle="Röstningen är stängd. Spana in den stora skärmen." />
         <div className="actions">
@@ -154,7 +172,7 @@ export default function VotePage() {
     );
   }
 
-  if (!name || editingName) {
+  if (!name || editingName || home) {
     return (
       <main className="page page--start">
         {editingName ? (
@@ -191,7 +209,7 @@ export default function VotePage() {
             autoFocus
           />
           <button className="btn btn--dark btn--block" disabled={!nameDraft.trim()}>
-            {editingName ? "Spara" : "Börja rösta"}
+            {editingName ? "Spara" : name ? "Fortsätt rösta" : "Börja rösta"}
           </button>
           {editingName && (
             <button type="button" className="btn btn--ghost btn--block" onClick={() => setEditingName(false)}>
@@ -285,7 +303,7 @@ export default function VotePage() {
 
   return (
     <main className="page">
-      <Brand />
+      <Brand onClick={goHome} />
       <p className="hero__sub hero__sub--solo">Betygsätt bullarna!</p>
 
       <div className="progress-wrap">
