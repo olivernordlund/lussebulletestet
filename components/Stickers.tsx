@@ -13,11 +13,16 @@ export default function Stickers({ variant = "phone" }: { variant?: "phone" | "s
           <Bun size={230} />
         </span>
       )}
-      <span className="sticker sticker--yellow" style={style({ x: "4%", y: "26%", r: "-6deg" })}>
+      {!phone && (
+        <span className="sticker sticker--bun sticker--bigbun" style={style({ x: "88%", y: "27%", r: "-174deg" })}>
+          <Bun size={260} />
+        </span>
+      )}
+      <span className={`sticker ${phone ? "sticker--yellow" : "sticker--white"}`} style={style({ x: "4%", y: "26%", r: "-6deg" })}>
         👀 Utseende
       </span>
       <span className="sticker sticker--dark" style={style({ x: "70%", y: "16%", r: "5deg" })}>
-        Smak
+        {phone ? "Smak" : "Smak 9"}
       </span>
       <span className="sticker sticker--saffron" style={style({ x: "66%", y: "60%", r: "-4deg" })}>
         ★ 27/30
@@ -29,7 +34,7 @@ export default function Stickers({ variant = "phone" }: { variant?: "phone" | "s
         <span className="sticker__row sticker__row--muted">Hemmabakad</span>
       </span>
       {!phone && (
-        <span className="sticker sticker--pill" style={style({ x: "86%", y: "26%", r: "7deg" })}>
+        <span className="sticker sticker--white" style={style({ x: "86%", y: "26%", r: "7deg" })}>
           🤏 Konsistens
         </span>
       )}

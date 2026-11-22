@@ -15,7 +15,7 @@ export function Brand({ right, onClick }: { right?: React.ReactNode; onClick?: (
         }}
       >
         <Bun size={22} />
-        <span>Lussebulletestet</span>
+        <span>Det stora saffransbulletestet</span>
       </a>
       {right}
     </div>

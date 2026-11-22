@@ -182,9 +182,9 @@ export default function VotePage() {
             <h1 className="start-title">
               Det stora
               <br />
-              lussebulle-
+              saffransbulle
               <br />
-              testet
+              -testet
             </h1>
             <Stickers />
             <p className="start-sub">Betygsätt bullarna på utseende, smak och konsistens – och gissa vilken som är vilken.</p>
@@ -239,17 +239,18 @@ export default function VotePage() {
             ← Bullar
           </button>
           <span className="chip chip--plain">
-            {done}/{NUM_BUNS} klara
+            {done}/{NUM_BUNS} betygsatta
           </span>
         </nav>
 
         <div className="bun-hero">
           <span className="bun-hero__art">
-            <Bun size={96} />
-            <span className="bun-hero__num">{active}</span>
+            <Bun size={104} />
           </span>
-          <h1 className="hero__title">Bulle {active}</h1>
-          <p className="hero__sub">Sätt ett betyg från 1 till 10.</p>
+          <h1 className="bulle-title">
+            Bulle<span className="bulle-title__num">{active}</span>
+          </h1>
+          <p className="bulle-sub">Sätt ett betyg från 1 till 10.</p>
           <span className={`sum-sticker ${ready ? "sum-sticker--on" : ""}`}>{ready ? `${sum}/30` : "–/30"}</span>
         </div>
 
@@ -266,7 +267,6 @@ export default function VotePage() {
         <section className="block">
           <div className="block__head">
             <span>🕵️ Vilken bulle är det?</span>
-            <span className="muted">Valfritt</span>
           </div>
           <div className="select-wrap">
             <select
@@ -322,10 +322,19 @@ export default function VotePage() {
           const total = complete ? v!.look! + v!.taste! + v!.texture! : null;
           return (
             <button key={n} className={`tile ${complete ? "tile--done" : ""}`} onClick={() => openBun(n)}>
-              <span className="tile__num">{n}</span>
-              <Bun size={64} />
-              <span className="tile__meta">{complete ? `${total}/30` : "Betygsätt"}</span>
-              {complete && <span className="tile__badge">Klar ✓</span>}
+              {complete ? (
+                <>
+                  <span className="tile__num">{n}</span>
+                  <Bun size={44} />
+                  <span className="tile__meta">{total}/30</span>
+                  <span className="tile__badge">Klar ✓</span>
+                </>
+              ) : (
+                <>
+                  <Bun size={58} />
+                  <span className="tile__bignum">{n}</span>
+                </>
+              )}
             </button>
           );
         })}
@@ -358,7 +367,6 @@ function ScoreRow({
         <span>
           {emoji} {label}
         </span>
-        <span className={`value ${value != null ? "value--on" : ""}`}>{value ?? "–"}</span>
       </div>
       <div className="scores" role="radiogroup" aria-label={label}>
         {Array.from({ length: MAX_SCORE }, (_, i) => i + 1).map((n) => (

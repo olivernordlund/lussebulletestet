@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Header from "@/components/Header";
 import Stickers from "@/components/Stickers";
 import Bun from "@/components/Bun";
 import { NUM_BUNS, Results } from "@/lib/types";
@@ -51,7 +50,7 @@ export default function ResultsPage() {
   if (!data) {
     return (
       <main className="screen">
-        <Header big />
+        <h1 className="screen-title">Det stora Saffransbulle-testet</h1>
       </main>
     );
   }
@@ -62,7 +61,11 @@ export default function ResultsPage() {
     return (
       <main className="screen">
         <Stickers variant="screen" />
-        <Header big subtitle="Röstningen pågår – betygsätt i mobilen." />
+        <h1 className="screen-title">
+          Det stora
+          <br />
+          Saffransbulle-testet
+        </h1>
         <div className="screen__stat">
           <span className="screen__count">{data.voters}</span>
           <span>{data.voters === 1 ? "person har röstat" : "personer har röstat"}</span>
@@ -73,13 +76,13 @@ export default function ResultsPage() {
               <div className="waitbar__track">
                 <div className="waitbar__fill" style={{ height: `${(c / max) * 100}%` }} />
               </div>
-              <Bun size={54} />
+              <Bun size={48} />
               <span className="waitbar__label">Bulle {i + 1}</span>
               <span className="waitbar__count">{c} röster</span>
             </div>
           ))}
         </div>
-        <p className="screen__pulse">🕯️ Väntar på avslöjandet…</p>
+        <p className="screen__pulse">Väntar på resultatet…</p>
         {data.storage === "memory" && <p className="warn">Ingen databas kopplad – röster sparas bara tillfälligt.</p>}
       </main>
     );
@@ -90,39 +93,38 @@ export default function ResultsPage() {
   const shown = (rankIdx: number) => step >= ranking.length - rankIdx; // last place first
   const showFacit = step >= lastStep;
   const winnerShown = shown(0);
+  const title = step === 0 ? "Dags för avslöjandet!" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet";
 
   return (
     <main className="screen screen--reveal" onClick={next}>
       {step === 0 && <Stickers variant="screen" />}
-      <Header big compact={step > 0} subtitle={step === 0 ? "Dags för avslöjandet!" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet"} />
+      <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : ""}`} key={title}>
+        {title}
+      </h1>
 
       {winnerShown && <Confetti />}
 
-      <div className={`results ${showFacit ? "results--facit" : ""}`}>
+      <div className={`results ${showFacit ? "results--facit" : ""} ${step === 0 ? "results--intro" : ""}`}>
         <ol className="ranking">
           {ranking.map((r, i) => {
             const visible = shown(i);
             return (
               <li key={r.bun} className={`rank ${visible ? "rank--in" : ""} ${i === 0 && visible ? "rank--winner" : ""}`}>
-                <span className="rank__place">{i < 3 ? MEDALS[i] : `${i + 1}.`}</span>
+                <span className="rank__place">{i + 1}</span>
                 {visible ? (
                   <>
-                    <Bun size={i === 0 ? 70 : 52} />
                     <div className="rank__main">
-                      <span className="rank__bun">
-                        Bulle {r.bun}
-                        {showFacit && (
-                          <span className="rank__answer">{r.answer ? <> – {r.answer}</> : <em> – facit saknas</em>}</span>
-                        )}
+                      <span className="rank__title">
+                        <span className="rank__bun">Bulle {r.bun}</span>
+                        {showFacit && <span className="rank__answer">{r.answer ?? "Facit saknas"}</span>}
                       </span>
                       <span className="rank__detail">
-                        Utseende {fmt(r.look)} · Smak {fmt(r.taste)} · Konsistens {fmt(r.texture)}
-                        <span className="rank__votes"> · {r.votes} röster</span>
+                        Utseende {fmt(r.look)} · Smak {fmt(r.taste)} · Konsistens {fmt(r.texture)} · {r.votes} röster
                         {showFacit && r.answer && r.guesses > 0 && (
-                          <span className="rank__correct">
+                          <>
                             {" "}
                             · {r.correctGuesses}/{r.guesses} gissade rätt
-                          </span>
+                          </>
                         )}
                       </span>
                     </div>
@@ -151,14 +153,15 @@ export default function ResultsPage() {
                 {data.guessers.slice(0, 10).map((g, i, all) => {
                   // Shared placement for ties (1, 1, 3, …)
                   const place = all.findIndex((x) => x.correct === g.correct);
+                  const medal = place < 3 && g.correct > 0;
                   return (
-                  <li key={g.name + i} className={place === 0 && g.correct > 0 ? "guesser--top" : ""}>
-                    <span>{place < 3 && g.correct > 0 ? MEDALS[place] : `${place + 1}.`}</span>
-                    <span className="guesser__name">{g.name}</span>
-                    <span className="guesser__score">
-                      {g.correct}/{NUM_BUNS}
-                    </span>
-                  </li>
+                    <li key={g.name + i} className={place === 0 && g.correct > 0 ? "guesser--top" : ""}>
+                      <span className="guesser__place">{medal ? MEDALS[place] : `${place + 1}.`}</span>
+                      <span className="guesser__name">{g.name}</span>
+                      <span className="guesser__score">
+                        {g.correct}/{NUM_BUNS}
+                      </span>
+                    </li>
                   );
                 })}
               </ol>
@@ -185,20 +188,74 @@ export default function ResultsPage() {
   );
 }
 
+// Deterministic pseudo-random so server/client and re-renders stay stable
+const rnd = (i: number, salt: number) => {
+  const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+const COLORS = ["#FFCC00", "#FFE066", "#161514", "#FFFFFF", "#E11D48", "#3F9E4D", "#F29B18", "#FFF3DF"];
+
 function Confetti() {
-  const pieces = Array.from({ length: 60 }, (_, i) => i);
-  const colors = ["#FFC94A", "#F59E1B", "#FFF3C4", "#C2410C", "#E11D48", "#FDE68A"];
+  const rain = Array.from({ length: 220 }, (_, i) => i);
+  const burst = Array.from({ length: 160 }, (_, i) => i);
+  const buns = Array.from({ length: 14 }, (_, i) => i);
   return (
     <div className="confetti" aria-hidden>
-      {pieces.map((i) => (
+      <div className="confetti__flash" />
+      {/* Two cannons from the bottom corners */}
+      {burst.map((i) => {
+        const left = i % 2 === 0;
+        const shape = i % 3;
+        return (
+          <span
+            key={`b${i}`}
+            className={`confetti__piece confetti__piece--burst confetti__shape-${shape}`}
+            style={{
+              [left ? "left" : "right"]: "-20px",
+              background: COLORS[i % COLORS.length],
+              ["--bx" as string]: `${(left ? 1 : -1) * (15 + rnd(i, 1) * 55)}vw`,
+              ["--by" as string]: `${-(45 + rnd(i, 2) * 55)}vh`,
+              ["--rot" as string]: `${(rnd(i, 3) * 1440 - 720).toFixed(0)}deg`,
+              ["--s" as string]: `${0.7 + rnd(i, 4) * 1.1}`,
+              animationDelay: `${(rnd(i, 5) * 0.35).toFixed(2)}s`,
+              animationDuration: `${(2.6 + rnd(i, 6) * 1.6).toFixed(2)}s`,
+            }}
+          />
+        );
+      })}
+      {/* Flying buns */}
+      {buns.map((i) => {
+        const left = i % 2 === 0;
+        return (
+          <img
+            key={`bun${i}`}
+            src="/lussebulle.png"
+            alt=""
+            className="confetti__bun"
+            style={{
+              [left ? "left" : "right"]: "-60px",
+              ["--bx" as string]: `${(left ? 1 : -1) * (20 + rnd(i, 7) * 45)}vw`,
+              ["--by" as string]: `${-(55 + rnd(i, 8) * 40)}vh`,
+              ["--rot" as string]: `${(rnd(i, 9) * 900 - 450).toFixed(0)}deg`,
+              animationDelay: `${(0.1 + rnd(i, 10) * 0.5).toFixed(2)}s`,
+            }}
+          />
+        );
+      })}
+      {/* Endless rain */}
+      {rain.map((i) => (
         <span
-          key={i}
+          key={`r${i}`}
+          className={`confetti__piece confetti__piece--rain confetti__shape-${i % 3}`}
           style={{
-            left: `${(i * 37) % 100}%`,
-            background: colors[i % colors.length],
-            animationDelay: `${(i % 12) * 0.25}s`,
-            animationDuration: `${3 + (i % 5) * 0.6}s`,
-            transform: `rotate(${i * 29}deg)`,
+            left: `${(rnd(i, 11) * 100).toFixed(1)}%`,
+            background: COLORS[(i * 3) % COLORS.length],
+            ["--sway" as string]: `${(rnd(i, 12) * 160 - 80).toFixed(0)}px`,
+            ["--rot" as string]: `${(rnd(i, 13) * 1080).toFixed(0)}deg`,
+            ["--s" as string]: `${0.6 + rnd(i, 14) * 1}`,
+            animationDelay: `${(0.6 + rnd(i, 15) * 5).toFixed(2)}s`,
+            animationDuration: `${(3.5 + rnd(i, 16) * 3.5).toFixed(2)}s`,
           }}
         />
       ))}

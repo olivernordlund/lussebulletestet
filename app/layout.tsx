@@ -3,8 +3,8 @@ import "@fontsource-variable/nunito";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lussebulletestet",
-  description: "Rösta på årets bästa lussebulle",
+  title: "Det stora saffransbulletestet",
+  description: "Rösta på årets bästa saffransbulle",
   icons: { icon: "/lussebulle.png", apple: "/lussebulle.png" },
   appleWebApp: { capable: true, title: "Lussebullar", statusBarStyle: "default" },
 };
