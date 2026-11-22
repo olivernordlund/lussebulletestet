@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Lussebulletestet",
   description: "Rösta på årets bästa lussebulle",
-  icons: { icon: "/lussebulle.svg", apple: "/lussebulle.svg" },
+  icons: { icon: "/lussebulle.png", apple: "/lussebulle.png" },
   appleWebApp: { capable: true, title: "Lussebullar", statusBarStyle: "default" },
 };
 
