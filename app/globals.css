@@ -975,3 +975,7 @@ body:has(.page--start) { background: var(--saffron-soft); }
 .rank__main { flex-wrap: nowrap; align-items: baseline; column-gap: 20px; }
 .rank__detail { flex: 1 1 auto; flex-basis: auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .results--facit .rank { padding-top: 1.2vh; padding-bottom: 1.2vh; }
+.results { max-width: 1400px; }
+.results--facit { max-width: 1760px; grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); gap: 2vw; }
+.screen--reveal { padding-left: 3vw; padding-right: 3vw; }
+.rank__detail { font-size: clamp(15px, 1.15vw, 20px); }
