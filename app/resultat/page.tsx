@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playDrumRoll, playFanfare, playPling, playWinnerSong, toggleMute, unlockAudio } from "@/lib/sound";
-import FloatingBuns from "@/components/FloatingBuns";
 import QrCode from "@/components/QrCode";
 import { NUM_BUNS, Results } from "@/lib/types";
 
@@ -88,7 +87,6 @@ export default function ResultsPage() {
   if (!data.revealed && data.screen === "qr") {
     return (
       <main className="screen screen--qr">
-        <FloatingBuns />
         <h1 className="screen-title screen-title--qr">
           Det stora
           <br />
@@ -117,7 +115,6 @@ export default function ResultsPage() {
     const max = Math.max(1, data.voters);
     return (
       <main className="screen screen--voting">
-        <FloatingBuns allBlurred />
         <h1 className="screen-title">
           Det stora
           <br />
@@ -153,7 +150,6 @@ export default function ResultsPage() {
 
   return (
     <main className="screen screen--reveal" onClick={next}>
-      {step === 0 && <FloatingBuns />}
       <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : "screen-title--intro"}`} key={title}>
         {step === 0 ? (
           <>
