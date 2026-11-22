@@ -24,16 +24,20 @@ export type Voter = {
   updatedAt: number;
 };
 
+export type ScreenMode = "qr" | "voting";
+
 export type Config = {
   candidates: string[];
   answers: Record<string, number | null>; // bun number -> candidate index
   revealed: boolean;
+  screen: ScreenMode; // what the big screen shows before the reveal
 };
 
 export const defaultConfig = (): Config => ({
   candidates: Array.from({ length: NUM_BUNS }, (_, i) => `Alternativ ${i + 1}`),
   answers: {},
   revealed: false,
+  screen: "qr",
 });
 
 export type PublicState = {
@@ -64,6 +68,7 @@ export type GuesserResult = {
 export type Results =
   | {
       revealed: false;
+      screen: ScreenMode;
       voters: number;
       votesPerBun: number[];
       storage: "redis" | "memory";

@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   let body: Results;
   if (!config.revealed && !preview) {
-    body = { revealed: false, voters: voters.length, votesPerBun: counts, storage: storageKind };
+    body = { revealed: false, screen: config.screen ?? "qr", voters: voters.length, votesPerBun: counts, storage: storageKind };
   } else {
     body = {
       revealed: true,

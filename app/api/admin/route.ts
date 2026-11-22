@@ -52,6 +52,12 @@ export async function POST(req: NextRequest) {
       await setConfig({ ...config, candidates, answers });
       break;
     }
+    case "setScreen":
+      if (body.screen !== "qr" && body.screen !== "voting") {
+        return NextResponse.json({ error: "Okänd skärm" }, { status: 400 });
+      }
+      await setConfig({ ...config, screen: body.screen });
+      break;
     case "reveal":
       await setConfig({ ...config, revealed: true });
       break;

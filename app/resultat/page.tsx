@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Stickers from "@/components/Stickers";
+import FloatingBuns from "@/components/FloatingBuns";
+import QrCode from "@/components/QrCode";
 import Bun from "@/components/Bun";
 import { NUM_BUNS, Results } from "@/lib/types";
 
@@ -55,12 +56,40 @@ export default function ResultsPage() {
     );
   }
 
+  // ---------- QR code: let everyone join ----------
+  if (!data.revealed && data.screen === "qr") {
+    return (
+      <main className="screen screen--qr">
+        <FloatingBuns />
+        <h1 className="screen-title screen-title--qr">
+          Det stora
+          <br />
+          Saffransbulle-testet
+        </h1>
+        <div className="qr-stage">
+          <span className="qr-sticker qr-sticker--left">Skanna mig!</span>
+          <QrCode />
+          <span className="qr-sticker qr-sticker--right">📱 Öppna kameran</span>
+        </div>
+        <p className="qr-hint">
+          Rikta mobilkameran mot koden och skriv in ditt namn.
+          {data.voters > 0 && (
+            <>
+              {" "}
+              <strong>{data.voters}</strong> har redan börjat rösta.
+            </>
+          )}
+        </p>
+      </main>
+    );
+  }
+
   // ---------- Waiting for reveal ----------
   if (!data.revealed) {
     const max = Math.max(1, data.voters);
     return (
       <main className="screen">
-        <Stickers variant="screen" />
+        <FloatingBuns />
         <h1 className="screen-title">
           Det stora
           <br />
@@ -97,7 +126,7 @@ export default function ResultsPage() {
 
   return (
     <main className="screen screen--reveal" onClick={next}>
-      {step === 0 && <Stickers variant="screen" />}
+      {step === 0 && <FloatingBuns />}
       <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : ""}`} key={title}>
         {title}
       </h1>
@@ -170,20 +199,6 @@ export default function ResultsPage() {
         )}
       </div>
 
-      <nav className="controls" onClick={(e) => e.stopPropagation()}>
-        <button onClick={prev} disabled={step === 0}>
-          ◀
-        </button>
-        <span>
-          {step === 0 ? "Tryck för att börja" : step <= NUM_BUNS ? `Plats ${NUM_BUNS - step + 1}` : "Facit"}
-        </span>
-        <button onClick={next} disabled={step === lastStep}>
-          ▶
-        </button>
-        <button onClick={() => setStep(lastStep)} className="controls__all">
-          Visa allt
-        </button>
-      </nav>
     </main>
   );
 }

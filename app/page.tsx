@@ -206,7 +206,6 @@ export default function VotePage() {
             aria-label="Ditt namn"
             autoComplete="given-name"
             maxLength={40}
-            autoFocus
           />
           <button className="btn btn--dark btn--block" disabled={!nameDraft.trim()}>
             {editingName ? "Spara" : name ? "Fortsätt rösta" : "Börja rösta"}
@@ -247,9 +246,7 @@ export default function VotePage() {
           <span className="bun-hero__art">
             <Bun size={104} />
           </span>
-          <h1 className="bulle-title">
-            Bulle<span className="bulle-title__num">{active}</span>
-          </h1>
+          <h1 className="bulle-title">Bulle {active}</h1>
           <p className="bulle-sub">Sätt ett betyg från 1 till 10.</p>
           <span className={`sum-sticker ${ready ? "sum-sticker--on" : ""}`}>{ready ? `${sum}/30` : "–/30"}</span>
         </div>

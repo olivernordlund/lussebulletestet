@@ -177,6 +177,31 @@ export default function AdminPage() {
           </span>
         </a>
       </section>
+      {!revealed && (
+        <>
+          <p className="group-title">Storskärmen visar</p>
+          <div className="segmented" role="radiogroup" aria-label="Storskärmen visar">
+            {[
+              { key: "qr", label: "📱 QR-kod", hint: "Så att alla kommer in" },
+              { key: "voting", label: "📊 Röstning", hint: "Antal röster per bulle" },
+            ].map((o) => {
+              const on = (snap?.config.screen ?? "qr") === o.key;
+              return (
+                <button
+                  key={o.key}
+                  role="radio"
+                  aria-checked={on}
+                  className={`segmented__opt ${on ? "segmented__opt--on" : ""}`}
+                  onClick={() => !on && act({ action: "setScreen", screen: o.key }, o.key === "qr" ? "Storskärmen visar QR-koden" : "Storskärmen visar röstningen")}
+                >
+                  <span>{o.label}</span>
+                  <small>{o.hint}</small>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
       {revealed ? (
         <button className="btn btn--tinted btn--block" onClick={() => act({ action: "hide" }, "Röstningen är öppen igen")}>
           Dölj resultat och öppna röstningen
