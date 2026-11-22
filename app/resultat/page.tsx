@@ -77,9 +77,7 @@ export default function ResultsPage() {
 
   if (!data) {
     return (
-      <main className="screen">
-        <h1 className="screen-title">Det stora Saffransbulle-testet</h1>
-      </main>
+      <main className="screen" />
     );
   }
 
