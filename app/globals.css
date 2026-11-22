@@ -953,3 +953,8 @@ body:has(.page--start) { background: var(--saffron-soft); }
   animation: spin-bun 14s linear infinite, drift-in 1s var(--spring) both;
 }
 @keyframes spin-bun { to { rotate: 360deg; } }
+
+/* Voting screen: wider bars */
+.waitbars { max-width: 1500px; }
+.waitbar__track { width: 100%; max-width: 150px; border-radius: 20px; }
+.waitbar__fill { border-radius: 20px; }
