@@ -113,16 +113,23 @@ export default function AdminPage() {
       <main className="page">
         <Header subtitle="Admin" />
         <form
-          className="card"
           onSubmit={(e) => {
             e.preventDefault();
             login(pw);
           }}
         >
-          <label className="label" htmlFor="pw">
-            Lösenord
-          </label>
-          <input id="pw" type="password" className="input" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus />
+          <p className="group-title">Lösenord</p>
+          <section className="group">
+            <input
+              id="pw"
+              type="password"
+              className="field"
+              placeholder="Lösenord"
+              value={pw}
+              onChange={(e) => setPw(e.target.value)}
+              autoFocus
+            />
+          </section>
           {err && <p className="error">{err}</p>}
           <button className="btn btn--primary btn--block">Logga in</button>
         </form>
@@ -137,49 +144,59 @@ export default function AdminPage() {
       <Header subtitle="Admin" />
 
       {snap?.storage === "memory" && (
-        <p className="warn">
-          ⚠️ Ingen Redis-databas är kopplad. Röster sparas bara i minnet och fungerar inte på Vercel. Se README.
-        </p>
+        <p className="warn">Ingen Redis-databas är kopplad. Röster sparas bara i minnet och fungerar inte på Vercel. Se README.</p>
       )}
       {snap?.defaultPassword && (
-        <p className="warn">⚠️ Standardlösenordet används. Sätt miljövariabeln ADMIN_PASSWORD i Vercel.</p>
+        <p className="warn">Standardlösenordet används. Sätt miljövariabeln ADMIN_PASSWORD i Vercel.</p>
       )}
 
-      <section className="card">
-        <h2>Status</h2>
-        <p>
-          Röstningen är <strong>{revealed ? "stängd – resultatet visas" : "öppen"}</strong>. {snap?.voters.length ?? 0}{" "}
-          deltagare.
-        </p>
+      <p className="group-title">Status</p>
+      <section className="group">
         <div className="row">
-          {revealed ? (
-            <button className="btn" onClick={() => act({ action: "hide" }, "Resultatet dolt, röstningen öppen igen")}>
-              Dölj resultat & öppna röstningen
-            </button>
-          ) : (
-            <button className="btn btn--primary" onClick={() => act({ action: "reveal" }, "Avslöjat! 🎉")}>
-              🎉 Avslöja resultatet
-            </button>
-          )}
-          <a className="btn" href="/resultat" target="_blank">
-            Öppna resultatskärm ↗
-          </a>
-          <a className="btn" href="/" target="_blank">
-            Öppna röstning ↗
-          </a>
+          <span className="row__label">Röstning</span>
+          <span className={`status ${revealed ? "status--closed" : "status--open"}`}>
+            {revealed ? "Stängd – resultat visas" : "Öppen"}
+          </span>
         </div>
-        <p className="hint">När du avslöjar stängs röstningen och resultatskärmen går att stega igenom (klick / mellanslag).</p>
+        <div className="row">
+          <span className="row__label">Deltagare</span>
+          <span className="row__value">{snap?.voters.length ?? 0}</span>
+        </div>
+        <a className="row row--link" href="/resultat" target="_blank">
+          <span className="row__label row__label--accent">Öppna resultatskärm</span>
+          <span className="row__value">
+            <Arrow />
+          </span>
+        </a>
+        <a className="row row--link" href="/" target="_blank">
+          <span className="row__label row__label--accent">Öppna röstning</span>
+          <span className="row__value">
+            <Arrow />
+          </span>
+        </a>
       </section>
+      {revealed ? (
+        <button className="btn btn--tinted btn--block" onClick={() => act({ action: "hide" }, "Röstningen är öppen igen")}>
+          Dölj resultat och öppna röstningen
+        </button>
+      ) : (
+        <button className="btn btn--primary btn--block" onClick={() => act({ action: "reveal" }, "Avslöjat 🎉")}>
+          Avslöja resultatet
+        </button>
+      )}
+      <p className="group-footer">
+        När du avslöjar stängs röstningen. Stega igenom resultatskärmen med klick, mellanslag eller piltangenterna.
+      </p>
 
-      <section className="card">
-        <h2>Alternativ att gissa på</h2>
-        <p className="hint">Fyll i innan testet startar – deltagarna väljer bland dessa. Ändra inte ordningen när folk börjat rösta.</p>
+      <p className="group-title">Alternativ att gissa på</p>
+      <section className="group">
         {candidates.map((c, i) => (
-          <div className="row" key={i}>
-            <span className="idx">{i + 1}</span>
+          <div className="row row--input" key={i}>
+            <span className="row__index">{i + 1}</span>
             <input
-              className="input"
+              className="field field--inline"
               value={c}
+              placeholder={`Alternativ ${i + 1}`}
               maxLength={50}
               onChange={(e) => {
                 const next = [...candidates];
@@ -189,140 +206,151 @@ export default function AdminPage() {
               }}
             />
             <button
-              className="btn btn--ghost"
-              aria-label="Ta bort"
+              className="remove"
+              aria-label={`Ta bort ${c || "alternativ"}`}
               onClick={() => {
                 setCandidates(candidates.filter((_, j) => j !== i));
                 setDirty(true);
               }}
             >
-              ✕
+              <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
+                <circle cx="11" cy="11" r="11" fill="currentColor" />
+                <path d="M6.5 11h9" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
         ))}
         <button
-          className="btn btn--ghost"
+          className="row row--link"
           onClick={() => {
             setCandidates([...candidates, ""]);
             setDirty(true);
           }}
         >
-          + Lägg till alternativ
+          <span className="row__label row__label--accent">Lägg till alternativ</span>
         </button>
       </section>
+      <p className="group-footer">Fyll i innan testet startar. Ändra inte ordningen när folk har börjat rösta.</p>
 
-      <section className="card">
-        <h2>Facit</h2>
-        <p className="hint">Vilken är vilken? Kan fyllas i när som helst innan avslöjandet.</p>
-        <div className="facit">
-          {Array.from({ length: NUM_BUNS }, (_, i) => String(i + 1)).map((n) => (
-            <label key={n} className="facit__row">
-              <span>Bulle {n}</span>
-              <select
-                className="input select"
-                value={answers[n] ?? ""}
-                onChange={(e) => {
-                  setAnswers({ ...answers, [n]: e.target.value === "" ? null : Number(e.target.value) });
-                  setDirty(true);
-                }}
-              >
-                <option value="">– Ej angivet –</option>
-                {candidates.map((c, i) => (
-                  <option key={i} value={i}>
-                    {c || `(tomt ${i + 1})`}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ))}
-        </div>
-      </section>
-
-      <div className="sticky-actions">
-        <button
-          className="btn btn--primary btn--block"
-          disabled={!dirty}
-          onClick={() => act({ action: "saveConfig", candidates, answers }, "Sparat ✓", true)}
-        >
-          {dirty ? "Spara alternativ & facit" : "Allt sparat ✓"}
-        </button>
-      </div>
-
-      <section className="card">
-        <h2>Deltagare ({snap?.voters.length ?? 0})</h2>
-        {snap?.voters.length ? (
-          <ul className="voters">
-            {snap.voters.map((v) => (
-              <li key={v.id}>
-                <span>{v.name}</span>
-                <span className="muted">
-                  {v.bunsVoted}/{NUM_BUNS} bullar
-                </span>
-                <button
-                  className="btn btn--ghost btn--small"
-                  onClick={() =>
-                    confirm === v.id
-                      ? act({ action: "deleteVoter", voterId: v.id }, `${v.name} borttagen`)
-                      : setConfirm(v.id)
-                  }
-                >
-                  {confirm === v.id ? "Säker?" : "Ta bort"}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="muted">Inga röster än.</p>
-        )}
-      </section>
-
-      <section className="card">
-        <h2>Förhandsgranska</h2>
-        <p className="hint">Bara för dig – tjuvkika på ställningen innan avslöjandet.</p>
-        <button className="btn" onClick={loadPreview}>
-          Visa nuvarande ställning
-        </button>
-        {preview?.revealed && (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Bulle</th>
-                <th>Totalt</th>
-                <th>Röster</th>
-                <th>Facit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {preview.ranking.map((r, i) => (
-                <tr key={r.bun}>
-                  <td>{i + 1}</td>
-                  <td>{r.bun}</td>
-                  <td>{r.total.toFixed(1)}</td>
-                  <td>{r.votes}</td>
-                  <td>{r.answer ?? "–"}</td>
-                </tr>
+      <p className="group-title">Facit</p>
+      <section className="group">
+        {Array.from({ length: NUM_BUNS }, (_, i) => String(i + 1)).map((n) => (
+          <label key={n} className="row row--select">
+            <span className="row__label">Bulle {n}</span>
+            <span className="row__value">
+              {answers[n] != null ? candidates[answers[n]!] || `Alternativ ${answers[n]! + 1}` : "Ej angivet"}
+              <Chevron />
+            </span>
+            <select
+              aria-label={`Facit bulle ${n}`}
+              value={answers[n] ?? ""}
+              onChange={(e) => {
+                setAnswers({ ...answers, [n]: e.target.value === "" ? null : Number(e.target.value) });
+                setDirty(true);
+              }}
+            >
+              <option value="">Ej angivet</option>
+              {candidates.map((c, i) => (
+                <option key={i} value={i}>
+                  {c || `Alternativ ${i + 1}`}
+                </option>
               ))}
-            </tbody>
-          </table>
+            </select>
+          </label>
+        ))}
+      </section>
+      <p className="group-footer">Kan fyllas i när som helst före avslöjandet.</p>
+
+      {dirty && (
+        <div className="bottom-bar">
+          <button
+            className="btn btn--primary btn--block"
+            onClick={() => act({ action: "saveConfig", candidates, answers }, "Sparat", true)}
+          >
+            Spara alternativ och facit
+          </button>
+        </div>
+      )}
+
+      <p className="group-title">Deltagare</p>
+      <section className="group">
+        {snap?.voters.length ? (
+          snap.voters.map((v) => (
+            <div className="row" key={v.id}>
+              <span className="row__label">{v.name}</span>
+              <span className="row__value">
+                {v.bunsVoted}/{NUM_BUNS}
+              </span>
+              <button
+                className={`btn btn--small ${confirm === v.id ? "btn--destructive" : "btn--tinted-red"}`}
+                onClick={() =>
+                  confirm === v.id
+                    ? act({ action: "deleteVoter", voterId: v.id }, `${v.name} borttagen`)
+                    : setConfirm(v.id)
+                }
+              >
+                {confirm === v.id ? "Ta bort" : "Radera"}
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="row">
+            <span className="row__label muted">Inga röster än</span>
+          </div>
         )}
       </section>
 
-      <section className="card card--danger">
-        <h2>Nollställ</h2>
-        <p className="hint">Raderar alla röster och öppnar röstningen igen. Alternativ och facit behålls.</p>
+      <p className="group-title">Förhandsgranska</p>
+      <section className="group">
+        <button className="row row--link" onClick={loadPreview}>
+          <span className="row__label row__label--accent">Visa nuvarande ställning</span>
+        </button>
+        {preview?.revealed &&
+          preview.ranking.map((r, i) => (
+            <div className="row" key={r.bun}>
+              <span className="row__index">{i + 1}</span>
+              <span className="row__label">
+                Bulle {r.bun}
+                {r.answer && <span className="muted"> · {r.answer}</span>}
+              </span>
+              <span className="row__value">
+                {r.total.toLocaleString("sv-SE", { maximumFractionDigits: 1 })} p · {r.votes} röster
+              </span>
+            </div>
+          ))}
+      </section>
+      <p className="group-footer">Bara för dig – tjuvkika på ställningen innan avslöjandet.</p>
+
+      <section className="group">
         <button
-          className="btn btn--danger"
-          onClick={() =>
-            confirm === "clear" ? act({ action: "clearVotes" }, "Alla röster raderade") : setConfirm("clear")
-          }
+          className="row row--link row--center"
+          onClick={() => (confirm === "clear" ? act({ action: "clearVotes" }, "Alla röster raderade") : setConfirm("clear"))}
         >
-          {confirm === "clear" ? "Tryck igen för att radera allt" : "Radera alla röster"}
+          <span className="row__label row__label--destructive">
+            {confirm === "clear" ? "Tryck igen för att radera allt" : "Radera alla röster"}
+          </span>
         </button>
       </section>
+      <p className="group-footer">Alternativ och facit behålls. Röstningen öppnas igen.</p>
 
       {err && <p className="error">{err}</p>}
       {msg && <div className="toast">{msg}</div>}
     </main>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg className="chevron" width="8" height="13" viewBox="0 0 8 13" aria-hidden>
+      <path d="M1.5 1.5 6.5 6.5l-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg className="chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+      <path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
