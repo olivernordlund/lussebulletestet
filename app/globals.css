@@ -842,3 +842,16 @@ body:has(.page--start) { background: var(--saffron-soft); }
   100% { transform: translate3d(calc(var(--sway) * -1), calc(-100vh - 520px), 0) rotate(var(--spin)); }
 }
 .qr { padding: 28px; }
+
+/* Bigger buns need even more room; bigger bar labels */
+.float-bun { bottom: -700px; }
+@keyframes bun-rise {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(var(--sway), -75vh, 0) rotate(calc(var(--spin) / 2)); }
+  100% { transform: translate3d(calc(var(--sway) * -1), calc(-100vh - 780px), 0) rotate(var(--spin)); }
+}
+.waitbars { gap: 1vw; }
+.waitbar { gap: 10px; }
+.waitbar__track { margin-bottom: 6px; }
+.waitbar__label { font-size: clamp(24px, 2.2vw, 36px); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.waitbar__count { font-size: clamp(16px, 1.3vw, 22px); }

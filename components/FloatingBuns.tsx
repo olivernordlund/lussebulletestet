@@ -5,16 +5,18 @@ const rnd = (i: number, salt: number) => {
   return x - Math.floor(x);
 };
 
-export default function FloatingBuns({ count = 26 }: { count?: number }) {
+export default function FloatingBuns({ count = 26, allBlurred = false }: { count?: number; allBlurred?: boolean }) {
   return (
     <div className="float-buns" aria-hidden>
       {Array.from({ length: count }, (_, i) => {
         const depth = rnd(i, 1); // 0 = far away, 1 = right in front of the camera
         // Exaggerated depth: tiny far-away buns, huge close-up ones
-        const size = Math.round(70 + Math.pow(depth, 1.6) * 360);
+        const size = Math.round(110 + Math.pow(depth, 1.6) * 560);
         const duration = 34 - depth * 20 + rnd(i, 2) * 8; // close buns move faster
         // Out of focus at both ends: far background and close foreground
-        const blur = depth < 0.35 ? (0.35 - depth) * 22 : depth > 0.82 ? (depth - 0.82) * 45 : 0;
+        const blur = allBlurred
+          ? 7 + Math.abs(depth - 0.5) * 14 // everything soft, so the bars stay in focus
+          : depth < 0.35 ? (0.35 - depth) * 22 : depth > 0.82 ? (depth - 0.82) * 45 : 0;
         return (
           <span
             key={i}

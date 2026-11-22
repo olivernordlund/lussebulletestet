@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import FloatingBuns from "@/components/FloatingBuns";
 import QrCode from "@/components/QrCode";
-import Bun from "@/components/Bun";
 import { NUM_BUNS, Results } from "@/lib/types";
 
 const fmt = (n: number | null, d = 1) =>
@@ -89,7 +88,7 @@ export default function ResultsPage() {
     const max = Math.max(1, data.voters);
     return (
       <main className="screen">
-        <FloatingBuns />
+        <FloatingBuns allBlurred />
         <h1 className="screen-title">
           Det stora
           <br />
@@ -105,7 +104,6 @@ export default function ResultsPage() {
               <div className="waitbar__track">
                 <div className="waitbar__fill" style={{ height: `${(c / max) * 100}%` }} />
               </div>
-              <Bun size={48} />
               <span className="waitbar__label">Bulle {i + 1}</span>
               <span className="waitbar__count">{c} röster</span>
             </div>
