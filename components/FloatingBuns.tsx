@@ -9,9 +9,12 @@ export default function FloatingBuns({ count = 26 }: { count?: number }) {
   return (
     <div className="float-buns" aria-hidden>
       {Array.from({ length: count }, (_, i) => {
-        const depth = rnd(i, 1); // 0 = far away, 1 = close
-        const size = Math.round(50 + depth * 170);
-        const duration = 26 - depth * 12 + rnd(i, 2) * 8; // close buns move faster
+        const depth = rnd(i, 1); // 0 = far away, 1 = right in front of the camera
+        // Exaggerated depth: tiny far-away buns, huge close-up ones
+        const size = Math.round(70 + Math.pow(depth, 1.6) * 360);
+        const duration = 34 - depth * 20 + rnd(i, 2) * 8; // close buns move faster
+        // Out of focus at both ends: far background and close foreground
+        const blur = depth < 0.35 ? (0.35 - depth) * 22 : depth > 0.82 ? (depth - 0.82) * 45 : 0;
         return (
           <span
             key={i}
@@ -20,11 +23,11 @@ export default function FloatingBuns({ count = 26 }: { count?: number }) {
               left: `${(rnd(i, 3) * 100).toFixed(1)}%`,
               width: size,
               height: size,
-              opacity: 0.55 + depth * 0.45,
-              filter: depth < 0.3 ? `blur(${((0.3 - depth) * 8).toFixed(1)}px)` : undefined,
+              opacity: 0.45 + depth * 0.55,
+              filter: blur > 0.5 ? `blur(${blur.toFixed(1)}px)` : undefined,
               animationDuration: `${duration.toFixed(1)}s`,
               animationDelay: `${(-rnd(i, 4) * duration).toFixed(1)}s`,
-              ["--sway" as string]: `${Math.round(rnd(i, 5) * 120 - 60)}px`,
+              ["--sway" as string]: `${Math.round((rnd(i, 5) * 120 - 60) * (0.5 + depth))}px`,
               ["--spin" as string]: `${Math.round(rnd(i, 6) * 720 - 360)}deg`,
             }}
           >
