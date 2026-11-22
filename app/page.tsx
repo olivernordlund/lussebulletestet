@@ -156,13 +156,22 @@ export default function VotePage() {
 
   if (!name || editingName) {
     return (
-      <main className="page">
-        <Brand />
-        {!editingName && <Stickers />}
-        <Header
-          title={editingName ? "Byt namn" : "Vilken lussebulle vinner?"}
-          subtitle={editingName ? undefined : "Betygsätt 8 bullar på utseende, smak och konsistens – och gissa vilken som är vilken."}
-        />
+      <main className="page page--start">
+        {editingName ? (
+          <Header title="Byt namn" />
+        ) : (
+          <>
+            <h1 className="start-title">
+              Det stora
+              <br />
+              lussebulle-
+              <br />
+              testet
+            </h1>
+            <Stickers />
+            <p className="start-sub">Betygsätt bullarna på utseende, smak och konsistens – och gissa vilken som är vilken.</p>
+          </>
+        )}
         <form
           className="name-form"
           onSubmit={(e) => {
@@ -172,7 +181,7 @@ export default function VotePage() {
         >
           <input
             id="name"
-            className="input"
+            className="input input--white"
             value={nameDraft}
             onChange={(e) => setNameDraft(e.target.value)}
             placeholder="Ditt namn"
@@ -189,7 +198,6 @@ export default function VotePage() {
               Avbryt
             </button>
           )}
-          <p className="note">Namnet syns på topplistan över bästa gissare.</p>
         </form>
       </main>
     );
@@ -278,7 +286,7 @@ export default function VotePage() {
   return (
     <main className="page">
       <Brand />
-      <Header title={`Hej ${name}!`} subtitle="Välj en bulle att betygsätta. Du kan ändra fram till avslöjandet." />
+      <p className="hero__sub hero__sub--solo">Betygsätt bullarna!</p>
 
       <div className="progress-wrap">
         <div className="progress">

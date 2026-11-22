@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/nunito";
 import "./globals.css";
 
 export const metadata: Metadata = {
