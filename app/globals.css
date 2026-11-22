@@ -958,3 +958,20 @@ body:has(.page--start) { background: var(--saffron-soft); }
 .waitbars { max-width: 1500px; }
 .waitbar__track { width: 100%; max-width: 150px; border-radius: 20px; }
 .waitbar__fill { border-radius: 20px; }
+
+/* Intro: title on top of the rotating bun */
+.screen-title--intro { margin-top: 32vh; margin-bottom: 0; }
+.spin-bun {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  z-index: 0;
+  margin: 0;
+  width: clamp(320px, 62vh, 640px);
+}
+
+/* Results: bun info to the right of the name, on one line */
+.rank__main { flex-wrap: nowrap; align-items: baseline; column-gap: 20px; }
+.rank__detail { flex: 1 1 auto; flex-basis: auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.results--facit .rank { padding-top: 1.2vh; padding-bottom: 1.2vh; }
