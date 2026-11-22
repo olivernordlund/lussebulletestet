@@ -940,3 +940,16 @@ body:has(.page--start) { background: var(--saffron-soft); }
 .results--facit .rank { min-height: 0; padding-top: 0.9vh; padding-bottom: 0.9vh; }
 
 .rank__detail { flex-basis: 100%; }
+
+/* Intro: bun centered under the title, slowly rotating */
+.screen-title--intro { margin-top: 18vh; }
+.screen--reveal .screen-title--intro { margin-bottom: 4vh; }
+.spin-bun {
+  display: block;
+  margin: 0 auto;
+  width: clamp(200px, 30vh, 340px);
+  pointer-events: none;
+  filter: drop-shadow(0 26px 34px rgba(150, 90, 0, 0.25));
+  animation: spin-bun 14s linear infinite, drift-in 1s var(--spring) both;
+}
+@keyframes spin-bun { to { rotate: 360deg; } }

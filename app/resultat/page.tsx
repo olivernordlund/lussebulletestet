@@ -143,10 +143,6 @@ export default function ResultsPage() {
 
   return (
     <main className="screen screen--reveal" onClick={next}>
-      {step === 0 && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src="/lussebulle.png" alt="" aria-hidden className="drift-bun" draggable={false} />
-      )}
       <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : "screen-title--intro"}`} key={title}>
         {step === 0 ? (
           <>
@@ -158,6 +154,11 @@ export default function ResultsPage() {
           title
         )}
       </h1>
+
+      {step === 0 && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/lussebulle.png" alt="" aria-hidden className="spin-bun" draggable={false} />
+      )}
 
       {winnerShown && <Confetti />}
 
