@@ -981,11 +981,6 @@ body:has(.page--start) { background: var(--saffron-soft); }
 .rank__detail { font-size: clamp(15px, 1.15vw, 20px); }
 
 /* ---------- Results: more playful ---------- */
-.screen--reveal {
-  background-color: var(--saffron-soft);
-  background-image: radial-gradient(rgba(180, 120, 0, 0.13) 2px, transparent 2.5px);
-  background-size: 34px 34px;
-}
 /* Rows lean slightly, like stickers on a fridge */
 .ranking .rank--in:nth-child(odd) { rotate: -0.35deg; }
 .ranking .rank--in:nth-child(even) { rotate: 0.35deg; }

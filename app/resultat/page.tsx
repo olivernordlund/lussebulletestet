@@ -139,7 +139,7 @@ export default function ResultsPage() {
   const shown = (rankIdx: number) => step >= ranking.length - rankIdx && !(rankIdx === 0 && drum); // last place first
   const showFacit = step >= lastStep;
   const winnerShown = shown(0);
-  const title = step === 0 ? "Vilken bulle vinner?" : drum ? "Och vinnaren är…" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet";
+  const title = step === 0 ? "Vilken bulle vinner?" : drum ? "Och vinnaren är…" : winnerShown ? "Årets saffransbulle är korad!" : "Resultatet";
 
   return (
     <main className="screen screen--reveal" onClick={next}>
@@ -183,7 +183,7 @@ export default function ResultsPage() {
                         {showFacit && <span className="rank__answer">{r.answer ?? "Facit saknas"}</span>}
                       </span>
                       <span className="rank__detail">
-                        Utseende {fmt(r.look)} · Smak {fmt(r.taste)} · Konsistens {fmt(r.texture)} · {r.votes} röster
+                        Utseende {fmt(r.look)} · Smak {fmt(r.taste)} · Konsistens {fmt(r.texture)}
                         {showFacit && r.answer && r.guesses > 0 && (
                           <>
                             {" "}
