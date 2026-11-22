@@ -115,14 +115,9 @@ export default function ResultsPage() {
     const max = Math.max(1, data.voters);
     return (
       <main className="screen screen--voting">
-        <h1 className="screen-title">
-          Det stora
-          <br />
-          Saffransbulle-testet
-        </h1>
-        <div className="screen__stat">
-          <span className="screen__count">{data.voters}</span>
-          <span>{data.voters === 1 ? "person har röstat" : "personer har röstat"}</span>
+        <div className="voting-hero">
+          <span className="voting-hero__count">{data.voters}</span>
+          <h1 className="voting-hero__title">{data.voters === 1 ? "person har röstat" : "personer har röstat"}</h1>
         </div>
         <div className="waitbars">
           {data.votesPerBun.map((c, i) => (
@@ -150,6 +145,10 @@ export default function ResultsPage() {
 
   return (
     <main className="screen screen--reveal" onClick={next}>
+      {step === 0 && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/lussebulle.png" alt="" aria-hidden className="drift-bun" draggable={false} />
+      )}
       <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : "screen-title--intro"}`} key={title}>
         {step === 0 ? (
           <>
