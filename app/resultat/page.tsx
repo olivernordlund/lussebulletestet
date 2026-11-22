@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { playDrumRoll, playFanfare, playPling, playWinnerSong, toggleMute, unlockAudio } from "@/lib/sound";
 import FloatingBuns from "@/components/FloatingBuns";
 import QrCode from "@/components/QrCode";
 import { NUM_BUNS, Results } from "@/lib/types";
@@ -32,8 +33,35 @@ export default function ResultsPage() {
     if (data && !data.revealed) setStep(0);
   }, [data]);
 
-  const next = useCallback(() => setStep((s) => Math.min(s + 1, lastStep)), [lastStep]);
-  const prev = useCallback(() => setStep((s) => Math.max(s - 1, 0)), []);
+  // Drum roll suspense before the winner is shown
+  const [drum, setDrum] = useState(false);
+  const stepRef = useRef(0);
+  const drumRef = useRef(false);
+  stepRef.current = step;
+  drumRef.current = drum;
+
+  const next = useCallback(() => {
+    unlockAudio();
+    if (drumRef.current) return;
+    const n = stepRef.current + 1;
+    if (n > lastStep) return;
+    if (n === 1) playFanfare();
+    if (n === NUM_BUNS) {
+      // winner: build up with a drum roll, then reveal with a crash + tune
+      setDrum(true);
+      playDrumRoll(1.7);
+      window.setTimeout(() => {
+        setDrum(false);
+        playWinnerSong();
+      }, 1750);
+    } else if (n > 1 && n < NUM_BUNS) {
+      playPling(NUM_BUNS - n + 1);
+    }
+    setStep(n);
+  }, [lastStep]);
+  const prev = useCallback(() => {
+    if (!drumRef.current) setStep((s) => Math.max(s - 1, 0));
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -42,6 +70,7 @@ export default function ResultsPage() {
         e.preventDefault();
         next();
       } else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "m" || e.key === "M") toggleMute();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -87,7 +116,7 @@ export default function ResultsPage() {
   if (!data.revealed) {
     const max = Math.max(1, data.voters);
     return (
-      <main className="screen">
+      <main className="screen screen--voting">
         <FloatingBuns allBlurred />
         <h1 className="screen-title">
           Det stora
@@ -117,26 +146,38 @@ export default function ResultsPage() {
 
   // ---------- Reveal ----------
   const ranking = data.ranking;
-  const shown = (rankIdx: number) => step >= ranking.length - rankIdx; // last place first
+  const shown = (rankIdx: number) => step >= ranking.length - rankIdx && !(rankIdx === 0 && drum); // last place first
   const showFacit = step >= lastStep;
   const winnerShown = shown(0);
-  const title = step === 0 ? "Dags för avslöjandet!" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet";
+  const title = step === 0 ? "Vilken bulle vinner?" : drum ? "Och vinnaren är…" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet";
 
   return (
     <main className="screen screen--reveal" onClick={next}>
       {step === 0 && <FloatingBuns />}
-      <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : ""}`} key={title}>
-        {title}
+      <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : "screen-title--intro"}`} key={title}>
+        {step === 0 ? (
+          <>
+            Vilken bulle
+            <br />
+            vinner?
+          </>
+        ) : (
+          title
+        )}
       </h1>
 
       {winnerShown && <Confetti />}
 
-      <div className={`results ${showFacit ? "results--facit" : ""} ${step === 0 ? "results--intro" : ""}`}>
+      {step > 0 && (
+      <div className={`results ${showFacit ? "results--facit" : ""}`}>
         <ol className="ranking">
           {ranking.map((r, i) => {
             const visible = shown(i);
             return (
-              <li key={r.bun} className={`rank ${visible ? "rank--in" : ""} ${i === 0 && visible ? "rank--winner" : ""}`}>
+              <li
+                key={r.bun}
+                className={`rank ${visible ? "rank--in" : ""} ${i === 0 && visible ? "rank--winner" : ""} ${i === 0 && drum ? "rank--drum" : ""}`}
+              >
                 <span className="rank__place">{i + 1}</span>
                 {visible ? (
                   <>
@@ -196,6 +237,7 @@ export default function ResultsPage() {
           </aside>
         )}
       </div>
+      )}
 
     </main>
   );

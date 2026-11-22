@@ -855,3 +855,21 @@ body:has(.page--start) { background: var(--saffron-soft); }
 .waitbar__track { margin-bottom: 6px; }
 .waitbar__label { font-size: clamp(24px, 2.2vw, 36px); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
 .waitbar__count { font-size: clamp(16px, 1.3vw, 22px); }
+
+/* Floating buns – GPU-friendly: one transform animation per bun, no filters */
+.float-bun { contain: strict; backface-visibility: hidden; transform: translateZ(0); }
+.float-bun img { animation: none; filter: none; display: block; }
+
+/* Figma v4 */
+.screen--voting { background: #fff9ef; }
+.screen--voting .screen-title { transform: rotate(-2deg); }
+.screen-title--intro { margin-top: 32vh; transform: rotate(-3deg); }
+.rank--drum { background: var(--yellow) !important; border: none !important; animation: drum-shake 0.12s linear infinite; }
+.rank--drum .rank__hidden { color: var(--ink); }
+@keyframes drum-shake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-3px, 1px) rotate(-0.4deg); }
+  50% { transform: translate(2px, -1px) rotate(0.3deg); }
+  75% { transform: translate(-1px, 2px) rotate(-0.2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}

@@ -247,7 +247,6 @@ export default function VotePage() {
             <Bun size={104} />
           </span>
           <h1 className="bulle-title">Bulle {active}</h1>
-          <p className="bulle-sub">Sätt ett betyg från 1 till 10.</p>
           <span className={`sum-sticker ${ready ? "sum-sticker--on" : ""}`}>{ready ? `${sum}/30` : "–/30"}</span>
         </div>
 
