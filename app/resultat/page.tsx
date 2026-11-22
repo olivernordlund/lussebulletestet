@@ -172,9 +172,11 @@ export default function ResultsPage() {
                 key={r.bun}
                 className={`rank ${visible ? "rank--in" : ""} ${i === 0 && visible ? "rank--winner" : ""} ${i === 0 && drum ? "rank--drum" : ""}`}
               >
-                <span className="rank__place">{i + 1}</span>
+                <span className="rank__place">{visible && i > 0 && i < 3 ? MEDALS[i] : i + 1}</span>
                 {visible ? (
                   <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/lussebulle.png" alt="" aria-hidden className="rank__bunimg" draggable={false} />
                     <div className="rank__main">
                       <span className="rank__title">
                         <span className="rank__bun">Bulle {r.bun}</span>
