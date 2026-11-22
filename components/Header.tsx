@@ -1,13 +1,25 @@
 import Bun from "./Bun";
 
-export default function Header({ subtitle, big = false, compact = false }: { subtitle?: string; big?: boolean; compact?: boolean }) {
+/** Small centered brand pill, design.how-style top bar. */
+export function Brand({ right }: { right?: React.ReactNode }) {
   return (
-    <header className={`header ${big ? "header--big" : ""} ${compact ? "header--compact" : ""}`}>
-      <Bun size={big ? 150 : 56} className="header__bun" />
-      <div>
-        <h1 className="header__title">Lussebulletestet</h1>
-        {subtitle && <p className="header__sub">{subtitle}</p>}
-      </div>
+    <div className="brand">
+      <a href="/" className="brand__pill">
+        <Bun size={22} />
+        <span>Lussebulletestet</span>
+      </a>
+      {right}
+    </div>
+  );
+}
+
+/** Centered hero title + subtitle. */
+export default function Header({ title = "Lussebulletestet", subtitle, big = false, compact = false }: { title?: string; subtitle?: string; big?: boolean; compact?: boolean }) {
+  return (
+    <header className={`hero ${big ? "hero--big" : ""} ${compact ? "hero--compact" : ""}`}>
+      {big && <Bun size={compact ? 56 : 96} className="hero__bun" />}
+      <h1 className="hero__title">{title}</h1>
+      {subtitle && <p className="hero__sub">{subtitle}</p>}
     </header>
   );
 }

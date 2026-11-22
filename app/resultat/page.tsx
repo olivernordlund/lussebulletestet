@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Header from "@/components/Header";
+import Stickers from "@/components/Stickers";
 import Bun from "@/components/Bun";
 import { NUM_BUNS, Results } from "@/lib/types";
 
@@ -60,7 +61,8 @@ export default function ResultsPage() {
     const max = Math.max(1, data.voters);
     return (
       <main className="screen">
-        <Header big subtitle="Röstningen pågår…" />
+        <Stickers variant="screen" />
+        <Header big subtitle="Röstningen pågår – betygsätt i mobilen." />
         <div className="screen__stat">
           <span className="screen__count">{data.voters}</span>
           <span>{data.voters === 1 ? "person har röstat" : "personer har röstat"}</span>
@@ -91,6 +93,7 @@ export default function ResultsPage() {
 
   return (
     <main className="screen screen--reveal" onClick={next}>
+      {step === 0 && <Stickers variant="screen" />}
       <Header big compact={step > 0} subtitle={step === 0 ? "Dags för avslöjandet!" : winnerShown ? "Årets lussebulle är korad!" : "Resultatet"} />
 
       {winnerShown && <Confetti />}

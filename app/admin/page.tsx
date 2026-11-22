@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Header from "@/components/Header";
+import Header, { Brand } from "@/components/Header";
 import { Config, NUM_BUNS, Results } from "@/lib/types";
 
 type Snapshot = {
@@ -111,7 +111,8 @@ export default function AdminPage() {
   if (!authed) {
     return (
       <main className="page">
-        <Header subtitle="Admin" />
+        <Brand />
+        <Header title="Admin" subtitle="Alternativ, facit och avslöjande." />
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -141,7 +142,8 @@ export default function AdminPage() {
 
   return (
     <main className="page page--wide">
-      <Header subtitle="Admin" />
+      <Brand />
+      <Header title="Admin" subtitle="Alternativ, facit och avslöjande." />
 
       {snap?.storage === "memory" && (
         <p className="warn">Ingen Redis-databas är kopplad. Röster sparas bara i minnet och fungerar inte på Vercel. Se README.</p>

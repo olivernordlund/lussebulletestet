@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Header from "@/components/Header";
+import Header, { Brand } from "@/components/Header";
+import Stickers from "@/components/Stickers";
 import Bun from "@/components/Bun";
 import { BunVote, CRITERIA, Criterion, MAX_SCORE, NUM_BUNS, PublicState, Voter } from "@/lib/types";
 
@@ -141,17 +142,14 @@ export default function VotePage() {
   if (state?.revealed) {
     return (
       <main className="page">
-        <Header subtitle="Röstningen är stängd" />
-        <section className="group">
-          <div className="empty">
-            <p className="big-emoji">🕯️</p>
-            <h2>Resultatet är avslöjat!</h2>
-            <p className="muted">Spana in den stora skärmen.</p>
-            <a className="btn btn--primary" href="/resultat">
-              Visa resultatet
-            </a>
-          </div>
-        </section>
+        <Brand />
+        <Stickers />
+        <Header title="Resultatet är avslöjat!" subtitle="Röstningen är stängd. Spana in den stora skärmen." />
+        <div className="actions">
+          <a className="btn btn--dark" href="/resultat">
+            Visa resultatet
+          </a>
+        </div>
       </main>
     );
   }
@@ -159,35 +157,39 @@ export default function VotePage() {
   if (!name || editingName) {
     return (
       <main className="page">
-        <Header subtitle="Betygsätt 8 lussebullar och gissa vilken som är vilken." />
+        <Brand />
+        {!editingName && <Stickers />}
+        <Header
+          title={editingName ? "Byt namn" : "Vilken lussebulle vinner?"}
+          subtitle={editingName ? undefined : "Betygsätt 8 bullar på utseende, smak och konsistens – och gissa vilken som är vilken."}
+        />
         <form
+          className="name-form"
           onSubmit={(e) => {
             e.preventDefault();
             saveName();
           }}
         >
-          <p className="group-title">Ditt namn</p>
-          <section className="group">
-            <input
-              id="name"
-              className="field"
-              value={nameDraft}
-              onChange={(e) => setNameDraft(e.target.value)}
-              placeholder="Namn"
-              autoComplete="given-name"
-              maxLength={40}
-              autoFocus
-            />
-          </section>
-          <p className="group-footer">Namnet syns på topplistan över bästa gissare.</p>
-          <button className="btn btn--primary btn--block" disabled={!nameDraft.trim()}>
+          <input
+            id="name"
+            className="input"
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            placeholder="Ditt namn"
+            aria-label="Ditt namn"
+            autoComplete="given-name"
+            maxLength={40}
+            autoFocus
+          />
+          <button className="btn btn--dark btn--block" disabled={!nameDraft.trim()}>
             {editingName ? "Spara" : "Börja rösta"}
           </button>
           {editingName && (
-            <button type="button" className="btn btn--plain btn--block" onClick={() => setEditingName(false)}>
+            <button type="button" className="btn btn--ghost btn--block" onClick={() => setEditingName(false)}>
               Avbryt
             </button>
           )}
+          <p className="note">Namnet syns på topplistan över bästa gissare.</p>
         </form>
       </main>
     );
@@ -205,30 +207,24 @@ export default function VotePage() {
     const sum = (draft.look ?? 0) + (draft.taste ?? 0) + (draft.texture ?? 0);
 
     return (
-      <main className="page page--nav">
-        <nav className="navbar">
-          <button className="navbar__back" onClick={() => setActive(null)}>
-            <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden>
-              <path d="M10 2 2 10l8 8" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Bullar
+      <main className="page">
+        <nav className="topbar">
+          <button className="chip" onClick={() => setActive(null)}>
+            ← Bullar
           </button>
-          <span className="navbar__title">Bulle {active}</span>
-          <span className="navbar__right">
-            {done}/{NUM_BUNS}
+          <span className="chip chip--plain">
+            {done}/{NUM_BUNS} klara
           </span>
         </nav>
 
         <div className="bun-hero">
-          <Bun size={72} />
-          <div className="bun-hero__text">
-            <h1 className="large-title">Bulle {active}</h1>
-            <p className="muted">Betygsätt från 1 till 10</p>
-          </div>
-          <div className="bun-hero__sum">
-            <span>{ready ? sum : "–"}</span>
-            <small>av 30</small>
-          </div>
+          <span className="bun-hero__art">
+            <Bun size={96} />
+            <span className="bun-hero__num">{active}</span>
+          </span>
+          <h1 className="hero__title">Bulle {active}</h1>
+          <p className="hero__sub">Sätt ett betyg från 1 till 10.</p>
+          <span className={`sum-sticker ${ready ? "sum-sticker--on" : ""}`}>{ready ? `${sum}/30` : "–/30"}</span>
         </div>
 
         {CRITERIA.map((c) => (
@@ -241,15 +237,14 @@ export default function VotePage() {
           />
         ))}
 
-        <p className="group-title">Gissning</p>
-        <section className="group">
-          <label className="row row--select">
-            <span className="row__label">🕵️ Vilken bulle är det?</span>
-            <span className="row__value">
-              {draft.guess != null ? candidates[draft.guess] ?? "Välj" : "Välj"}
-              <Chevron />
-            </span>
+        <section className="block">
+          <div className="block__head">
+            <span>🕵️ Vilken bulle är det?</span>
+            <span className="muted">Valfritt</span>
+          </div>
+          <div className="select-wrap">
             <select
+              className="input select"
               aria-label="Vilken bulle tror du det är?"
               value={draft.guess ?? ""}
               onChange={(e) => setDraft((d) => ({ ...d, guess: e.target.value === "" ? null : Number(e.target.value) }))}
@@ -265,15 +260,14 @@ export default function VotePage() {
                 );
               })}
             </select>
-          </label>
+          </div>
         </section>
-        <p className="group-footer">Valfritt – rätt gissningar ger poäng på gissartopplistan.</p>
 
         {error && <p className="error">{error}</p>}
 
         <div className="bottom-bar">
-          <button className="btn btn--primary btn--block" onClick={save} disabled={!ready || saving}>
-            {saving ? "Sparar…" : ready ? "Spara" : "Sätt betyg på alla tre"}
+          <button className="btn btn--dark btn--block" onClick={save} disabled={!ready || saving}>
+            {saving ? "Sparar…" : ready ? "Spara betyg" : "Sätt betyg på alla tre"}
           </button>
         </div>
         {toast && <div className="toast">{toast}</div>}
@@ -283,7 +277,8 @@ export default function VotePage() {
 
   return (
     <main className="page">
-      <Header subtitle={`Hej ${name}! Välj en bulle att betygsätta.`} />
+      <Brand />
+      <Header title={`Hej ${name}!`} subtitle="Välj en bulle att betygsätta. Du kan ändra fram till avslöjandet." />
 
       <div className="progress-wrap">
         <div className="progress">
@@ -294,66 +289,29 @@ export default function VotePage() {
         </span>
       </div>
 
-      <p className="group-title">Bullar</p>
-      <section className="group">
+      <div className="grid">
         {Array.from({ length: NUM_BUNS }, (_, i) => i + 1).map((n) => {
           const v = votes[String(n)];
           const complete = isComplete(v);
           const total = complete ? v!.look! + v!.taste! + v!.texture! : null;
           return (
-            <button key={n} className="row row--link" onClick={() => openBun(n)}>
-              <span className="row__icon">
-                <Bun size={34} />
-              </span>
-              <span className="row__label">Bulle {n}</span>
-              <span className={`row__value ${complete ? "row__value--done" : ""}`}>
-                {complete ? (
-                  <>
-                    <Check /> {total}/30
-                  </>
-                ) : (
-                  "Ej betygsatt"
-                )}
-                <Chevron />
-              </span>
+            <button key={n} className={`tile ${complete ? "tile--done" : ""}`} onClick={() => openBun(n)}>
+              <span className="tile__num">{n}</span>
+              <Bun size={64} />
+              <span className="tile__meta">{complete ? `${total}/30` : "Betygsätt"}</span>
+              {complete && <span className="tile__badge">Klar ✓</span>}
             </button>
           );
         })}
-      </section>
-      <p className="group-footer">
-        {done === NUM_BUNS
-          ? "Alla bullar betygsatta – snyggt! Du kan ändra fram till avslöjandet."
-          : "Du kan ändra dina betyg ända fram till avslöjandet."}
-      </p>
+      </div>
 
-      <section className="group">
-        <button className="row row--link" onClick={() => setEditingName(true)}>
-          <span className="row__label">Namn</span>
-          <span className="row__value">
-            {name}
-            <Chevron />
-          </span>
+      <p className="note center">
+        <button className="link" onClick={() => setEditingName(true)}>
+          Inte {name}? Byt namn
         </button>
-      </section>
+      </p>
       {toast && <div className="toast">{toast}</div>}
     </main>
-  );
-}
-
-function Chevron() {
-  return (
-    <svg className="chevron" width="8" height="13" viewBox="0 0 8 13" aria-hidden>
-      <path d="M1.5 1.5 6.5 6.5l-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function Check() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden className="check">
-      <circle cx="10" cy="10" r="10" fill="currentColor" />
-      <path d="m5.8 10.3 2.8 2.8 5.6-6" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
 
@@ -369,25 +327,27 @@ function ScoreRow({
   onChange: (v: number) => void;
 }) {
   return (
-    <>
-      <p className="group-title">
-        {emoji} {label}
-      </p>
-      <section className="group group--pad">
-        <div className="scores" role="radiogroup" aria-label={label}>
-          {Array.from({ length: MAX_SCORE }, (_, i) => i + 1).map((n) => (
-            <button
-              key={n}
-              role="radio"
-              aria-checked={value === n}
-              className={`score ${value === n ? "score--on" : ""}`}
-              onClick={() => onChange(n)}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-      </section>
-    </>
+    <section className="block">
+      <div className="block__head">
+        <span>
+          {emoji} {label}
+        </span>
+        <span className={`value ${value != null ? "value--on" : ""}`}>{value ?? "–"}</span>
+      </div>
+      <div className="scores" role="radiogroup" aria-label={label}>
+        {Array.from({ length: MAX_SCORE }, (_, i) => i + 1).map((n) => (
+          <button
+            key={n}
+            role="radio"
+            aria-checked={value === n}
+            className={`score ${value === n ? "score--on" : ""}`}
+            style={{ ["--tilt" as string]: `${n % 2 ? -4 : 4}deg` }}
+            onClick={() => onChange(n)}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }
