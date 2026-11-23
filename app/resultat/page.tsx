@@ -13,9 +13,9 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function ResultsPage() {
   const [data, setData] = useState<Results | null>(null);
-  // step 0: intro, 1..NUM_BUNS: reveal places from last to first, NUM_BUNS+1: facit (guessers behind a button)
+  // step 0: intro, 1..NUM_BUNS: reveal places from last to first, after the winner: buttons for guessers + save
   const [step, setStep] = useState(0);
-  const lastStep = NUM_BUNS + 1;
+  const lastStep = NUM_BUNS;
   const [showGuessers, setShowGuessers] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -149,18 +149,18 @@ export default function ResultsPage() {
   // ---------- Reveal ----------
   const ranking = data.ranking;
   const shown = (rankIdx: number) => step >= ranking.length - rankIdx && !(rankIdx === 0 && drum); // last place first
-  const showFacit = step >= lastStep;
+  const showFacit = step >= lastStep && !drum;
   const winnerShown = shown(0);
-  const title = step === 0 ? "Vilken bulle vinner?" : drum ? "Och vinnaren är…" : winnerShown ? "Årets saffransbulle är korad!" : "Resultatet";
+  const title = step === 0 ? "intro" : drum ? "Och vinnaren är…" : winnerShown ? "Årets saffransbulle är korad!" : "Resultatet";
 
   return (
     <main className="screen screen--reveal" onClick={next}>
       <h1 className={`screen-title ${step > 0 ? "screen-title--compact" : "screen-title--intro"}`} key={title}>
         {step === 0 ? (
           <>
-            Vilken bulle
+            Årets saffransbulle
             <br />
-            vinner?
+            {new Date().getFullYear()}
           </>
         ) : (
           title
@@ -170,6 +170,20 @@ export default function ResultsPage() {
       {step === 0 && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src="/lussebulle.png" alt="" aria-hidden className="spin-bun" draggable={false} />
+      )}
+
+      {step === 0 && (
+        <div className="intro-actions">
+          <button
+            className="result-btn result-btn--dark result-btn--big"
+            onClick={(e) => {
+              e.stopPropagation();
+              next();
+            }}
+          >
+            Visa resultatet
+          </button>
+        </div>
       )}
 
       {winnerShown && <Confetti />}
@@ -191,7 +205,7 @@ export default function ResultsPage() {
                     <img src="/lussebulle.png" alt="" aria-hidden className="rank__bunimg" draggable={false} />
                     <div className="rank__main">
                       <span className="rank__title">
-                        {showFacit && r.answer ? (
+                        {r.answer ? (
                           <span className="rank__bun rank__bun--name" key="name">{r.answer}</span>
                         ) : (
                           <span className="rank__bun">Bulle {r.bun}</span>

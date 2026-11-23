@@ -1141,3 +1141,11 @@ body:has(.page--start) { background: var(--saffron-soft); }
 
 .rank__bun--name { animation: fade 0.8s both; }
 .rank__bun { overflow: visible; }
+
+/* Intro: "Visa resultatet" button under the title */
+.intro-actions { position: relative; z-index: 2; display: flex; justify-content: center; margin-top: 5vh; animation: sticker-in 0.7s var(--spring) 0.5s both; }
+.result-btn--big { font-size: clamp(20px, 1.8vw, 30px); padding: 20px 40px; }
+@media (max-width: 760px) {
+  .intro-actions { margin-top: 4vh; }
+  .result-btn--big { flex: none; font-size: 19px; padding: 16px 30px; }
+}

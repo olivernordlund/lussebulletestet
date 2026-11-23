@@ -155,22 +155,14 @@ export default function VotePage() {
     }
   };
 
+  // Once the results are revealed, go straight to the results screen
+  useEffect(() => {
+    if (state?.revealed) window.location.replace("/resultat");
+  }, [state?.revealed]);
+
   // ---------- Render ----------
 
-  if (state?.revealed) {
-    return (
-      <main className="page">
-        <Brand onClick={goHome} />
-        <Stickers />
-        <Header title="Resultatet är avslöjat!" subtitle="Röstningen är stängd. Spana in den stora skärmen." />
-        <div className="actions">
-          <a className="btn btn--dark" href="/resultat">
-            Visa resultatet
-          </a>
-        </div>
-      </main>
-    );
-  }
+  if (state?.revealed) return <main className="page" />;
 
   if (!name || editingName || home) {
     return (
