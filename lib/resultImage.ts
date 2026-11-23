@@ -174,13 +174,7 @@ export async function saveResultImage(ranking: BunResult[]) {
     ctx.textAlign = "left";
     ctx.fillStyle = C.ink;
     ctx.font = `900 ${winner ? 44 : 34}px ${FONT}`;
-    const name = `Bulle ${r.bun}`;
-    ctx.fillText(name, tx, cy - 4);
-    const nw = ctx.measureText(name).width;
-    if (r.answer) {
-      ctx.font = `500 ${winner ? 36 : 30}px ${FONT}`;
-      ctx.fillText(fitText(ctx, r.answer, maxW - nw - 16), tx + nw + 16, cy - 4);
-    }
+    ctx.fillText(fitText(ctx, r.answer || `Bulle ${r.bun}`, maxW), tx, cy - 4);
     // Detail
     ctx.fillStyle = winner ? C.ink2 : C.muted;
     ctx.font = `400 ${winner ? 24 : 21}px ${FONT}`;

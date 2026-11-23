@@ -1138,3 +1138,6 @@ body:has(.page--start) { background: var(--saffron-soft); }
 
 .result-actions { z-index: 60; }
 .guessers-pop { z-index: 100; }
+
+.rank__bun--name { animation: fade 0.8s both; }
+.rank__bun { overflow: visible; }

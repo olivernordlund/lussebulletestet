@@ -191,8 +191,11 @@ export default function ResultsPage() {
                     <img src="/lussebulle.png" alt="" aria-hidden className="rank__bunimg" draggable={false} />
                     <div className="rank__main">
                       <span className="rank__title">
-                        <span className="rank__bun">Bulle {r.bun}</span>
-                        {showFacit && <span className="rank__answer">{r.answer ?? "Facit saknas"}</span>}
+                        {showFacit && r.answer ? (
+                          <span className="rank__bun rank__bun--name" key="name">{r.answer}</span>
+                        ) : (
+                          <span className="rank__bun">Bulle {r.bun}</span>
+                        )}
                       </span>
                       <span className="rank__detail">
                         Utseende {fmt(r.look)} · Smak {fmt(r.taste)} · Konsistens {fmt(r.texture)}
