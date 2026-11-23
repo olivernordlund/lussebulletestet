@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { playDrumRoll, playFanfare, playPling, playWinnerSong, toggleMute, unlockAudio } from "@/lib/sound";
 import QrCode from "@/components/QrCode";
 import { NUM_BUNS, Results } from "@/lib/types";
+import { saveResultImage } from "@/lib/resultImage";
 
 const fmt = (n: number | null, d = 1) =>
   n == null ? "–" : n.toLocaleString("sv-SE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -12,9 +13,11 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function ResultsPage() {
   const [data, setData] = useState<Results | null>(null);
-  // step 0: intro, 1..NUM_BUNS: reveal places from last to first, NUM_BUNS+1: facit + guessers
+  // step 0: intro, 1..NUM_BUNS: reveal places from last to first, NUM_BUNS+1: facit (guessers behind a button)
   const [step, setStep] = useState(0);
   const lastStep = NUM_BUNS + 1;
+  const [showGuessers, setShowGuessers] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const load = () =>
@@ -59,12 +62,21 @@ export default function ResultsPage() {
     setStep(n);
   }, [lastStep]);
   const prev = useCallback(() => {
+    setShowGuessers(false);
     if (!drumRef.current) setStep((s) => Math.max(s - 1, 0));
   }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!data?.revealed) return;
+      if (e.key === "Escape") {
+        setShowGuessers(false);
+        return;
+      }
+      if ((e.key === "g" || e.key === "G") && stepRef.current >= lastStep) {
+        setShowGuessers((v) => !v);
+        return;
+      }
       if (e.key === " " || e.key === "ArrowRight" || e.key === "Enter") {
         e.preventDefault();
         next();
@@ -73,7 +85,7 @@ export default function ResultsPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [data?.revealed, next, prev]);
+  }, [data?.revealed, next, prev, lastStep]);
 
   if (!data) {
     return (
@@ -205,8 +217,43 @@ export default function ResultsPage() {
           })}
         </ol>
 
-        {showFacit && (
-          <aside className="guessers">
+      </div>
+      )}
+
+      {showFacit && (
+        <div className="result-actions" onClick={(e) => e.stopPropagation()}>
+          <button className="result-btn result-btn--dark" onClick={() => setShowGuessers(true)}>
+            🕵️ Bästa gissare
+          </button>
+          <button
+            className="result-btn"
+            disabled={saving}
+            onClick={async () => {
+              setSaving(true);
+              try {
+                await saveResultImage(ranking);
+              } finally {
+                setSaving(false);
+              }
+            }}
+          >
+            {saving ? "Sparar…" : "📸 Spara listan"}
+          </button>
+        </div>
+      )}
+
+      {showFacit && showGuessers && (
+        <div
+          className="guessers-pop"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowGuessers(false);
+          }}
+        >
+          <aside className="guessers" onClick={(e) => e.stopPropagation()}>
+            <button className="guessers__close" aria-label="Stäng" onClick={() => setShowGuessers(false)}>
+              ✕
+            </button>
             <h2>🕵️ Bästa gissare</h2>
             {!data.hasAnswers ? (
               <p className="muted">Inget facit inlagt ännu.</p>
@@ -231,10 +278,8 @@ export default function ResultsPage() {
               </ol>
             )}
           </aside>
-        )}
-      </div>
+        </div>
       )}
-
     </main>
   );
 }

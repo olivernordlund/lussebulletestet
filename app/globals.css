@@ -1028,3 +1028,113 @@ body:has(.page--start) { background: var(--saffron-soft); }
 }
 
 .results--facit .rank__detail { font-size: clamp(14px, 1.05vw, 20px); }
+
+/* ---------- Results v7: facit first, guessers behind a button, save image ---------- */
+.results--facit { grid-template-columns: minmax(0, 1fr); max-width: 1400px; }
+
+.result-actions {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  translate: -50% 0;
+  z-index: 20;
+  display: flex;
+  gap: 14px;
+  animation: sticker-in 0.7s var(--spring) 0.4s both;
+}
+.result-btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(17px, 1.3vw, 22px);
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  box-shadow: 0 16px 34px -14px rgba(140, 90, 0, 0.55);
+  white-space: nowrap;
+  transition: transform 0.25s var(--spring), background 0.2s;
+}
+.result-btn:nth-child(odd) { rotate: -2deg; }
+.result-btn:nth-child(even) { rotate: 2deg; }
+.result-btn:hover { transform: scale(1.06); }
+.result-btn:active { transform: scale(0.95); }
+.result-btn:disabled { opacity: 0.6; cursor: progress; }
+.result-btn--dark { background: var(--ink); color: #fff; }
+
+.guessers-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(22, 21, 20, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fade 0.3s both;
+  cursor: default;
+}
+.guessers-pop .guessers {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: 34px 34px 26px;
+  rotate: -1deg;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.5);
+  animation: winner-pop 0.8s var(--spring) both;
+}
+.guessers__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--ink);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ---------- Results on phones ---------- */
+@media (max-width: 760px) {
+  .screen--reveal { padding: 18px 14px 130px; }
+  .screen-title--intro { margin-top: 30vh; font-size: clamp(46px, 13vw, 64px); }
+  .spin-bun { width: 78vw; }
+  .screen-title--compact { font-size: clamp(28px, 8vw, 40px); margin: 6px auto 22px; }
+
+  .ranking { gap: 10px; }
+  .rank,
+  .results--facit .rank { gap: 10px; min-height: 64px; padding: 12px 14px 12px 10px; border-radius: 16px; }
+  .rank--winner { min-height: 92px; padding-top: 18px; padding-bottom: 18px; }
+  .rank__place { width: 26px; font-size: 20px !important; flex-shrink: 0; }
+  .rank__bunimg { width: 32px; }
+  .rank--winner .rank__bunimg { width: 44px; }
+  .rank__main { flex-wrap: wrap; row-gap: 2px; }
+  .rank__title { gap: 8px; flex-wrap: wrap; white-space: normal; }
+  .rank__bun { font-size: 18px; }
+  .rank--winner .rank__bun { font-size: 22px; }
+  .rank__answer { font-size: 16px; }
+  .rank__detail,
+  .results--facit .rank__detail { flex-basis: 100%; font-size: 12.5px; white-space: normal; line-height: 1.35; }
+  .rank__total,
+  .rank:not(.rank--winner) .rank__total { font-size: 18px; padding: 3px 9px; flex-shrink: 0; }
+  .rank__total small { font-size: 11px; }
+  .rank--winner .rank__total { font-size: 26px; padding: 4px 10px; }
+  .rank--winner::after { font-size: 12px; padding: 3px 9px; top: -10px; right: 12px; }
+  .rank__hidden { font-size: 20px; }
+
+  .result-actions { left: 14px; right: 14px; bottom: 16px; translate: none; }
+  .result-btn { flex: 1; font-size: 16px; padding: 14px 10px; }
+  .guessers-pop .guessers { padding: 26px 20px 18px; }
+  .guessers-pop .guessers li { font-size: 19px; }
+}
+
+.result-actions { z-index: 60; }
+.guessers-pop { z-index: 100; }
